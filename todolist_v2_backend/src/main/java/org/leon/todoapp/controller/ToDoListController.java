@@ -2,6 +2,8 @@ package org.leon.todoapp.controller;
 
 import org.leon.todoapp.dto.ToDoListDto;
 import org.leon.todoapp.entity.ToDoList;
+import org.leon.todoapp.exceptions.AttributeException;
+import org.leon.todoapp.exceptions.ResourceNotFoundException;
 import org.leon.todoapp.service.ToDoListService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,22 +27,22 @@ public class ToDoListController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ToDoList> getOne(@PathVariable(name = "id") Long id){
+    public ResponseEntity<ToDoList> getOne(@PathVariable(name = "id") Long id) throws ResourceNotFoundException {
         return new ResponseEntity<>(toDoListService.getOne(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<ToDoList> save(@RequestBody ToDoList toDoList){
+    public ResponseEntity<ToDoList> save(@RequestBody ToDoList toDoList) throws AttributeException {
         return new ResponseEntity<>(toDoListService.save(toDoList), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ToDoList> update(@PathVariable(name = "id") Long id, @RequestBody ToDoListDto toDoListDto){
+    public ResponseEntity<ToDoList> update(@PathVariable(name = "id") Long id, @RequestBody ToDoListDto toDoListDto) throws ResourceNotFoundException, AttributeException {
         return new ResponseEntity<>(toDoListService.update(id, toDoListDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ToDoList> delete(@PathVariable(name = "id") Long id){
+    public ResponseEntity<ToDoList> delete(@PathVariable(name = "id") Long id) throws ResourceNotFoundException {
         return new ResponseEntity<>(toDoListService.delete(id), HttpStatus.OK);
     }
 }

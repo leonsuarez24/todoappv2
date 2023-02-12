@@ -2,6 +2,8 @@ package org.leon.todoapp.service.impl;
 
 import org.leon.todoapp.dto.ToDoListDto;
 import org.leon.todoapp.entity.ToDoList;
+import org.leon.todoapp.exceptions.AttributeException;
+import org.leon.todoapp.exceptions.ResourceNotFoundException;
 import org.leon.todoapp.repository.ToDoListRepository;
 import org.leon.todoapp.service.ToDoListService;
 import org.springframework.stereotype.Service;
@@ -23,26 +25,36 @@ public class ToDoListServiceImpl implements ToDoListService {
     }
 
     @Override
-    public ToDoList getOne(Long id) {
-        return toDoListRepository.findById(id).get();
+    public ToDoList getOne(Long id) throws ResourceNotFoundException {
+        return toDoListRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Not found")
+        );
     }
 
     @Override
-    public ToDoList save(ToDoList toDoList) {
+    public ToDoList save(ToDoList toDoList) throws AttributeException {
+        if (toDoListRepository.existsByName(toDoList.getName())){
+            throw new AttributeException("The task name " + toDoList.getName() + " is already in use");
+        }
         return toDoListRepository.save(toDoList);
     }
 
     @Override
-    public ToDoList update(Long id, ToDoListDto toDoListDto) {
-        ToDoList toDoList = toDoListRepository.findById(id).get();
+    public ToDoList update(Long id, ToDoListDto toDoListDto) throws ResourceNotFoundException, AttributeException {
+        ToDoList toDoList = toDoListRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found"));
+
+        if (toDoListRepository.existsByName(toDoListDto.name()) && !toDoListRepository.findByName(toDoListDto.name()).get().getId().equals(id)){
+            throw new AttributeException("The task name " + toDoListDto.name() + " is already in use");
+        }
+
         toDoList.setName(toDoListDto.name());
         toDoList.setContent(toDoListDto.content());
         return toDoListRepository.save(toDoList);
     }
 
     @Override
-    public ToDoList delete(Long id) {
-        ToDoList toDoList = toDoListRepository.findById(id).get();
+    public ToDoList delete(Long id) throws ResourceNotFoundException {
+        ToDoList toDoList = toDoListRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Not found"));
         toDoListRepository.delete(toDoList);
         return toDoList;
     }
