@@ -1,6 +1,7 @@
 package org.leon.todoapp.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "todo_lists")
@@ -9,7 +10,9 @@ public class ToDoList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "task name is mandatory")
     private String name;
+    @NotBlank(message = "task content is mandatory")
     private String content;
 
     public ToDoList() {

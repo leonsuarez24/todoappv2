@@ -1,5 +1,7 @@
 package org.leon.todoapp.controller;
 
+import jakarta.validation.Valid;
+import org.leon.todoapp.dto.MessageDto;
 import org.leon.todoapp.dto.ToDoListDto;
 import org.leon.todoapp.entity.ToDoList;
 import org.leon.todoapp.exceptions.AttributeException;
@@ -32,17 +34,23 @@ public class ToDoListController {
     }
 
     @PostMapping
-    public ResponseEntity<ToDoList> save(@RequestBody ToDoList toDoList) throws AttributeException {
-        return new ResponseEntity<>(toDoListService.save(toDoList), HttpStatus.CREATED);
+    public ResponseEntity<MessageDto> save(@Valid @RequestBody ToDoList toDoList) throws AttributeException {
+        ToDoList toDoListSaved = toDoListService.save(toDoList);
+        String message = "task " + toDoList.getName() + " has been saved";
+        return new ResponseEntity<>(new MessageDto(HttpStatus.CREATED, message), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ToDoList> update(@PathVariable(name = "id") Long id, @RequestBody ToDoListDto toDoListDto) throws ResourceNotFoundException, AttributeException {
-        return new ResponseEntity<>(toDoListService.update(id, toDoListDto), HttpStatus.CREATED);
+    public ResponseEntity<MessageDto> update(@PathVariable(name = "id") Long id, @Valid @RequestBody ToDoListDto toDoListDto) throws ResourceNotFoundException, AttributeException {
+        ToDoList toDoListUpdated = toDoListService.update(id, toDoListDto);
+        String message = "task " + toDoListDto.name() + " has been updated";
+        return new ResponseEntity<>(new MessageDto(HttpStatus.CREATED, message), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ToDoList> delete(@PathVariable(name = "id") Long id) throws ResourceNotFoundException {
-        return new ResponseEntity<>(toDoListService.delete(id), HttpStatus.OK);
+    public ResponseEntity<MessageDto> delete(@PathVariable(name = "id") Long id) throws ResourceNotFoundException {
+        ToDoList toDoListDeleted = toDoListService.delete(id);
+        String message = "task " + toDoListDeleted.getName() + " has been deleted";
+        return new ResponseEntity<>(new MessageDto(HttpStatus.CREATED, message), HttpStatus.OK);
     }
 }
