@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/todolist")
+@CrossOrigin
 public class ToDoListController {
 
     private final ToDoListService toDoListService;
